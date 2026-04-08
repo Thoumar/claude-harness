@@ -40,7 +40,7 @@ Challenge the following approach or implementation. Be rigorous and adversarial.
    - **VERDICT: VALIDATED** — No material issues found.
    - **VERDICT: NEEDS WORK** — Issues found, listed above.
 
-Be thorough but fair. Don't nitpick style — focus on correctness, security, and maintainability.
+Be thorough but fair. Do not nitpick style — focus on correctness, security, and maintainability.
 EOF
 )
 
