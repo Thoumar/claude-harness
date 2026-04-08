@@ -20,7 +20,7 @@ Planning & Implementation:
   /implement           Execute plan with quality checks
   /large-refactor      Bounded slices with Codex critique
 
-Hint: run /install-harness first if CLAUDE.md is missing or outdated.
+Rules: Ask before implementing. Validate with Codex. Never assume requirements.
 EOF
 )
 

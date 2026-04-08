@@ -69,3 +69,10 @@ Present the validation summary:
 - If Codex and you disagree, present both perspectives to the user.
 - Maximum 3 rounds. If still failing after 3 rounds, escalate — don't loop forever.
 - Codex is advisory only. It reads and reviews. It never edits.
+
+## Anti-Drift Rules
+
+- Before starting validation, use AskUserQuestion to confirm what specifically should be validated.
+- If you discover multiple critical issues, present them via AskUserQuestion and let the user prioritize.
+- If scope of validation reveals deeper problems than expected, stop and use AskUserQuestion to confirm whether to expand the review.
+- If you're unsure whether an issue is a real problem or a false positive, ask the user rather than deciding yourself.

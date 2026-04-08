@@ -9,6 +9,17 @@
     ]
   },
   "hooks": {
+    "UserPromptSubmit": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Classify this user message into one of these categories and return the result as JSON {\"ok\": true, \"additionalContext\": \"...\"}. Categories: (1) FEATURE_REQUEST - user wants to add/build something new -> additionalContext: 'Route to requirements-interviewer agent. Do NOT start implementing without a spec.' (2) EXPLORE_CODEBASE - user wants to understand how something works -> additionalContext: 'Route to codebase-researcher agent.' (3) EXTERNAL_RESEARCH - user asks about libraries/tools/ecosystem -> additionalContext: 'Route to deep-research-analyst agent.' (4) REFACTOR - user wants to change/migrate/restructure code -> additionalContext: 'Route to refactor-orchestrator agent.' (5) BUG_FIX - user reports a bug or error -> additionalContext: 'Use /investigate workflow. Ask clarifying questions before touching code.' (6) IMPLEMENTATION - user approved a plan and wants code written -> additionalContext: 'Use /implement workflow. Verify baseline first. Get Codex validation before finishing.' (7) TRIVIAL - simple question, file read, small tweak -> additionalContext: 'Handle directly. No agent needed.' (8) AMBIGUOUS - unclear intent -> additionalContext: 'Use AskUserQuestion to clarify what the user wants before doing anything.' Always default to AMBIGUOUS if unsure. Never default to IMPLEMENTATION."
+          }
+        ]
+      }
+    ],
     "SessionStart": [
       {
         "matcher": "",
@@ -24,7 +35,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "echo 'POST-COMPACT REMINDER: Auto-delegate to agents: requirements-interviewer (features/specs), codebase-researcher (repo exploration), deep-research-analyst (web research), refactor-orchestrator (large refactors), codex-challenger (validation). Codex sidekick must be consulted for all non-trivial work.'"
+            "command": "echo 'POST-COMPACT REMINDER: Auto-delegate to agents: requirements-interviewer (features/specs), codebase-researcher (repo exploration), deep-research-analyst (web research), refactor-orchestrator (large refactors), codex-challenger (validation). Codex sidekick must be consulted for all non-trivial work. NEVER implement without user approval. NEVER assume requirements — use AskUserQuestion.'"
           }
         ]
       }
@@ -40,13 +51,24 @@
         ]
       }
     ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "FILE=$(cat | jq -r '.tool_input.file_path // empty'); if [ -n \"$FILE\" ] && command -v npx >/dev/null 2>&1 && [ -f node_modules/.bin/prettier ]; then npx prettier --write \"$FILE\" 2>/dev/null; fi; exit 0"
+          }
+        ]
+      }
+    ],
     "Stop": [
       {
         "matcher": "",
         "hooks": [
           {
             "type": "prompt",
-            "prompt": "Review the conversation so far. Was this session trivial (simple question, reading files, small typo fix) or non-trivial (feature work, refactoring, code review, architecture, spec writing, planning, research)? If non-trivial: was Codex consulted at least once (via codex-challenger agent, codex-challenge.sh, codex-review.sh, or codex-web-search.sh)? If non-trivial work was done WITHOUT any Codex validation, return {\"ok\": false, \"reason\": \"Non-trivial work completed without Codex validation. Run a Codex challenge loop before finishing: use the codex-challenger agent or .claude/helpers/codex-challenge.sh.\"}. Otherwise return {\"ok\": true}."
+            "prompt": "Review the conversation so far. Was this session trivial (simple question, reading files, small typo fix) or non-trivial (feature work, refactoring, code review, architecture, spec writing, planning, research)? If non-trivial: (1) Was Codex consulted at least once (via codex-challenger agent, codex-challenge.sh, codex-review.sh, or codex-web-search.sh)? If not, return {\"ok\": false, \"reason\": \"Non-trivial work completed without Codex validation. Run a Codex challenge loop before finishing.\"}. (2) If code was written or files were modified, did the user explicitly approve the changes (clear 'looks good', 'approved', 'ship it', 'commit', or similar)? If not, return {\"ok\": false, \"reason\": \"Changes were made but not explicitly approved by the user. Present a summary and ask for approval before finishing.\"}. Otherwise return {\"ok\": true}."
           }
         ]
       }

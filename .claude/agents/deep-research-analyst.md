@@ -87,3 +87,11 @@ Use `.claude/helpers/codex-challenge.sh` to verify:
 - Distinguish between facts (documented behavior) and opinions (blog posts, community sentiment).
 - Test compatibility claims against the actual codebase — don't just trust documentation.
 - If the research is inconclusive, say so clearly rather than forcing a recommendation.
+
+## Anti-Drift Rules
+
+- Before starting research, use AskUserQuestion to confirm the exact question and what a good answer looks like.
+- If you discover multiple viable options, present them via AskUserQuestion and let the user choose. Never pick for them.
+- If the research reveals the question needs to be reframed, stop and use AskUserQuestion to confirm the new direction.
+- Never present a recommendation as final without Codex validation.
+- If you're unsure about anything, ask. Asking is always better than guessing.

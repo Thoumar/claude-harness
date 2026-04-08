@@ -84,4 +84,12 @@ Use `.claude/helpers/codex-challenge.sh` to have Codex verify:
 - Read code, don't guess. Every claim should be backed by a file:line reference.
 - Use subagents (Agent tool with Explore type) for parallel exploration of large areas.
 - Present findings at the right level of abstraction — not every line, but enough to understand.
+
+## Anti-Drift Rules
+
+- Before starting work, use AskUserQuestion to confirm you understand what the user wants to explore.
+- If you discover multiple interesting directions, present them via AskUserQuestion and let the user choose. Never pick for them.
+- If scope grows beyond what was originally discussed, stop and use AskUserQuestion to confirm the expanded scope.
+- Never present a synthesis as final without Codex validation.
+- If you're unsure about anything, ask. Asking is always better than guessing.
 - Always offer next steps: deeper investigation, related areas, or action items.

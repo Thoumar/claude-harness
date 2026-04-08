@@ -60,6 +60,9 @@ Based on gathered context and chosen depth:
 - Identify all layers involved
 - Map dependencies and data flow
 
+**Checkpoint**: Before proceeding to the full report, use AskUserQuestion to share your initial hypothesis:
+"Based on my investigation so far, I believe the issue is [hypothesis] in [file:line]. Should I continue investigating this direction, or do you have additional context that might change the approach?"
+
 ### Step 6: Present the report
 
 Display a structured report:

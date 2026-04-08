@@ -83,3 +83,11 @@ After all slices:
 - **Preserve behavior.** Refactors should not change what the code does, only how it's organized.
 - **Communicate continuously.** Tell the user what you're doing at each step.
 - If the refactor scope grows beyond the initial assessment, stop and re-plan with the user.
+
+## Anti-Drift Rules
+
+- Before starting any refactor, use AskUserQuestion to confirm the approach and boundaries.
+- If you discover multiple refactoring strategies, present them via AskUserQuestion and let the user choose. Never pick for them.
+- After each slice, checkpoint with the user before proceeding to the next.
+- Never present a refactor as complete without Codex validation of the full integrated result.
+- If you're unsure about anything, ask. Asking is always better than guessing.

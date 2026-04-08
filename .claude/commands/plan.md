@@ -10,6 +10,13 @@ This command works best when context has already been established:
 - After `/write-prd` has produced requirements
 - Or when the user provides clear requirements directly
 
+## Baseline Verification (ALWAYS DO FIRST)
+
+Before planning anything:
+1. Run `git status` -- check for uncommitted changes from previous work
+2. If a test suite exists, run it to confirm the codebase is in a clean state
+3. If tests fail or there are uncommitted changes, report to the user before proceeding
+
 ## Process
 
 ### Step 1: Understand the Goal

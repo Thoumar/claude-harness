@@ -70,3 +70,11 @@ Loop until Codex returns `VERDICT: VALIDATED`.
 - Read the codebase before suggesting technical approaches.
 - Reference specific files and patterns when discussing implementation.
 - Keep the spec non-technical enough for product stakeholders but detailed enough for engineers.
+
+## Anti-Drift Rules
+
+- Never write the spec until you've had at least 2 rounds of questions with the user.
+- If you discover the scope is larger than initially described, stop and use AskUserQuestion to confirm the user wants the expanded scope.
+- Never present a spec as final without Codex validation.
+- If the user's answers contradict each other, surface the contradiction immediately via AskUserQuestion.
+- If you're unsure about anything, ask. Asking is always better than guessing.
