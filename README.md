@@ -6,7 +6,7 @@ A portable Claude Code harness template. Drop it into any codebase to get struct
 
 A `.claude/` directory you copy into your project that gives Claude Code:
 
-- **9 slash commands** for structured workflows (planning, implementation, research, investigation)
+- **10 slash commands** for structured workflows (planning, implementation, research, investigation)
 - **5 specialized agents** that Claude auto-delegates to based on task type
 - **Codex integration** as a read-only adversarial reviewer
 - **Automatic stack detection** that generates project-specific CLAUDE.md configuration
@@ -19,30 +19,33 @@ A `.claude/` directory you copy into your project that gives Claude Code:
 
 ## Quick Start
 
-> **IMPORTANT**: After copying the harness, you MUST run `/install-harness` inside Claude Code. This detects your project's tech stack and generates a project-specific `CLAUDE.md` with coding standards, workflow configuration, and agent delegation rules. Without it, the harness uses generic defaults.
-
-### Option A: Copy and Install
-
-```bash
-# Copy the harness into your project
-cp -r /path/to/claude-harness/.claude /path/to/your-project/
-
-# Start Claude Code in your project
-cd /path/to/your-project
-claude
-
-# REQUIRED: Run the installer to generate project-specific CLAUDE.md
-# Type: /install-harness
-```
-
-### Option B: Git Subtree (stays synced with upstream)
+### One-liner install (recommended)
 
 ```bash
 cd /path/to/your-project
-git subtree add --prefix=.claude https://github.com/thomas-oumar/claude-harness main --squash
-
-# Then start Claude Code and run /install-harness
+curl -fsSL https://raw.githubusercontent.com/Thoumar/claude-harness/main/install.sh | bash
 ```
+
+Then open Claude Code and run `/install-harness` to generate your project-specific `CLAUDE.md`.
+
+### Manual copy
+
+```bash
+# Clone and copy
+git clone https://github.com/Thoumar/claude-harness.git /tmp/claude-harness
+cp -r /tmp/claude-harness/.claude /path/to/your-project/
+cp /tmp/claude-harness/CLAUDE.md /path/to/your-project/
+rm -rf /tmp/claude-harness
+```
+
+### Git Subtree (stays synced with upstream)
+
+```bash
+cd /path/to/your-project
+git subtree add --prefix=.claude https://github.com/Thoumar/claude-harness main --squash
+```
+
+> **IMPORTANT**: After installing, run `/install-harness` inside Claude Code. This detects your tech stack and generates a project-specific `CLAUDE.md` with coding standards, workflow configuration, and agent delegation rules. Without it, the harness uses generic defaults.
 
 ## Commands
 
@@ -86,6 +89,7 @@ These are auto-delegated based on the task type (configured in CLAUDE.md):
 │   ├── install-harness.md
 │   ├── write-prd.md
 │   ├── codebase-research.md
+│   ├── commit.md
 │   ├── deep-research.md
 │   ├── feature-interviewer.md
 │   ├── implement.md
