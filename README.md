@@ -19,6 +19,8 @@ A `.claude/` directory you copy into your project that gives Claude Code:
 
 ## Quick Start
 
+> **IMPORTANT**: After copying the harness, you MUST run `/install-harness` inside Claude Code. This detects your project's tech stack and generates a project-specific `CLAUDE.md` with coding standards, workflow configuration, and agent delegation rules. Without it, the harness uses generic defaults.
+
 ### Option A: Copy and Install
 
 ```bash
@@ -29,7 +31,7 @@ cp -r /path/to/claude-harness/.claude /path/to/your-project/
 cd /path/to/your-project
 claude
 
-# Run the installer to generate project-specific CLAUDE.md
+# REQUIRED: Run the installer to generate project-specific CLAUDE.md
 # Type: /install-harness
 ```
 
@@ -55,6 +57,7 @@ git subtree add --prefix=.claude https://github.com/thomas-oumar/claude-harness 
 | `/plan` | Implementation planning with Codex validation |
 | `/implement` | Execute implementation plans with quality checks |
 | `/large-refactor` | High-blast-radius work in bounded, validated slices |
+| `/commit` | Stage, commit, push, and optionally create a PR |
 
 ## Agents
 

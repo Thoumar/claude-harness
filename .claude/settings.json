@@ -14,8 +14,8 @@
         "matcher": "",
         "hooks": [
           {
-            "type": "prompt",
-            "prompt": "Classify this user message into one of these categories and return the result as JSON {\"ok\": true, \"additionalContext\": \"...\"}. Categories: (1) FEATURE_REQUEST - user wants to add/build something new -> additionalContext: 'Route to requirements-interviewer agent. Do NOT start implementing without a spec.' (2) EXPLORE_CODEBASE - user wants to understand how something works -> additionalContext: 'Route to codebase-researcher agent.' (3) EXTERNAL_RESEARCH - user asks about libraries/tools/ecosystem -> additionalContext: 'Route to deep-research-analyst agent.' (4) REFACTOR - user wants to change/migrate/restructure code -> additionalContext: 'Route to refactor-orchestrator agent.' (5) BUG_FIX - user reports a bug or error -> additionalContext: 'Use /investigate workflow. Ask clarifying questions before touching code.' (6) IMPLEMENTATION - user approved a plan and wants code written -> additionalContext: 'Use /implement workflow. Verify baseline first. Get Codex validation before finishing.' (7) TRIVIAL - simple question, file read, small tweak -> additionalContext: 'Handle directly. No agent needed.' (8) AMBIGUOUS - unclear intent -> additionalContext: 'Use AskUserQuestion to clarify what the user wants before doing anything.' Always default to AMBIGUOUS if unsure. Never default to IMPLEMENTATION."
+            "type": "command",
+            "command": "PROMPT=$(cat | jq -r '.prompt // empty'); LEN=${#PROMPT}; if [ \"$LEN\" -lt 12 ]; then exit 0; fi; if echo \"$PROMPT\" | grep -qiE '^(yes|no|ok|sure|thanks|ty|commit|push|looks good|ship it|approved|lgtm|go ahead|do it|perfect|great|good|fine|nah|nope|cancel|stop|wait|hold on)$'; then exit 0; fi; echo '{\"additionalContext\": \"Classify this request: if it is a feature/new work -> route to requirements-interviewer agent; if codebase question -> route to codebase-researcher; if external research -> route to deep-research-analyst; if refactor/migration -> route to refactor-orchestrator; if bug report -> use /investigate workflow and ask questions first; if user approved a plan -> use /implement with baseline verification; if ambiguous -> use AskUserQuestion to clarify before doing anything. NEVER start implementing without explicit user approval.\"}'"
           }
         ]
       }
@@ -46,7 +46,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/codex-readonly-guard.sh\""
+            "command": "CMD=$(cat | jq -r '.tool_input.command // empty'); if echo \"$CMD\" | grep -qE 'codex([[:space:]]|$)'; then bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/codex-readonly-guard.sh\"; else exit 0; fi"
           }
         ]
       }
@@ -57,7 +57,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "FILE=$(cat | jq -r '.tool_input.file_path // empty'); if [ -n \"$FILE\" ] && command -v npx >/dev/null 2>&1 && [ -f node_modules/.bin/prettier ]; then npx prettier --write \"$FILE\" 2>/dev/null; fi; exit 0"
+            "command": "FILE=$(cat | jq -r '.tool_input.file_path // empty'); [ -z \"$FILE\" ] && exit 0; EXT=\"${FILE##*.}\"; case \"$EXT\" in ts|tsx|js|jsx|json|css|scss|md|html|yaml|yml) command -v npx >/dev/null 2>&1 && [ -f node_modules/.bin/prettier ] && npx prettier --write \"$FILE\" 2>/dev/null;; dart) command -v dart >/dev/null 2>&1 && dart format \"$FILE\" 2>/dev/null;; py) command -v black >/dev/null 2>&1 && black -q \"$FILE\" 2>/dev/null || (command -v ruff >/dev/null 2>&1 && ruff format \"$FILE\" 2>/dev/null);; go) command -v gofmt >/dev/null 2>&1 && gofmt -w \"$FILE\" 2>/dev/null;; rs) command -v rustfmt >/dev/null 2>&1 && rustfmt \"$FILE\" 2>/dev/null;; rb) command -v rubocop >/dev/null 2>&1 && rubocop -A \"$FILE\" 2>/dev/null;; esac; exit 0"
           }
         ]
       }
@@ -68,7 +68,7 @@
         "hooks": [
           {
             "type": "prompt",
-            "prompt": "Review the conversation so far. Was this session trivial (simple question, reading files, small typo fix) or non-trivial (feature work, refactoring, code review, architecture, spec writing, planning, research)? If non-trivial: (1) Was Codex consulted at least once (via codex-challenger agent, codex-challenge.sh, codex-review.sh, or codex-web-search.sh)? If not, return {\"ok\": false, \"reason\": \"Non-trivial work completed without Codex validation. Run a Codex challenge loop before finishing.\"}. (2) If code was written or files were modified, did the user explicitly approve the changes (clear 'looks good', 'approved', 'ship it', 'commit', or similar)? If not, return {\"ok\": false, \"reason\": \"Changes were made but not explicitly approved by the user. Present a summary and ask for approval before finishing.\"}. Otherwise return {\"ok\": true}."
+            "prompt": "Review the conversation so far. Was this session trivial (simple question, reading files, small typo fix) or non-trivial (feature work, refactoring, code review, architecture, spec writing, planning, research)? If non-trivial: (1) Is Codex CLI available in this project? Check if any codex-challenger agent or codex helper script was invoked. If Codex IS available and was NOT consulted, return {\"ok\": false, \"reason\": \"Non-trivial work completed without Codex validation. Run a Codex challenge loop before finishing.\"}. If Codex is NOT available (helper scripts errored or codex CLI not installed), skip this check. (2) If code was written or files were modified, did the user explicitly approve the changes (clear 'looks good', 'approved', 'ship it', 'commit', or similar)? If not, return {\"ok\": false, \"reason\": \"Changes were made but not explicitly approved by the user. Present a summary and ask for approval before finishing.\"}. Otherwise return {\"ok\": true}."
           }
         ]
       }

@@ -1,7 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-MESSAGE=$(cat <<'EOF'
+# Check Codex availability once at session start
+CODEX_STATUS="available"
+if ! command -v codex >/dev/null 2>&1; then
+  CODEX_STATUS="not installed"
+fi
+
+MESSAGE=$(cat <<EOF
 Claude Harness — Command Guide
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -19,6 +25,9 @@ Planning & Implementation:
   /plan                Implementation planning with Codex validation
   /implement           Execute plan with quality checks
   /large-refactor      Bounded slices with Codex critique
+  /commit              Stage, commit, push, and optionally create a PR
+
+Codex CLI: ${CODEX_STATUS}$([ "$CODEX_STATUS" != "available" ] && echo " — install @openai/codex for validation loops" || echo "")
 
 Rules: Ask before implementing. Validate with Codex. Never assume requirements.
 EOF
