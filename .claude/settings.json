@@ -1,0 +1,55 @@
+{
+  "permissions": {
+    "allow": [
+      "Read",
+      "Grep",
+      "Glob",
+      "WebFetch",
+      "WebSearch"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/startup-command-guide.sh\""
+          }
+        ]
+      },
+      {
+        "matcher": "compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'POST-COMPACT REMINDER: Auto-delegate to agents: requirements-interviewer (features/specs), codebase-researcher (repo exploration), deep-research-analyst (web research), refactor-orchestrator (large refactors), codex-challenger (validation). Codex sidekick must be consulted for all non-trivial work.'"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/codex-readonly-guard.sh\""
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Review the conversation so far. Was this session trivial (simple question, reading files, small typo fix) or non-trivial (feature work, refactoring, code review, architecture, spec writing, planning, research)? If non-trivial: was Codex consulted at least once (via codex-challenger agent, codex-challenge.sh, codex-review.sh, or codex-web-search.sh)? If non-trivial work was done WITHOUT any Codex validation, return {\"ok\": false, \"reason\": \"Non-trivial work completed without Codex validation. Run a Codex challenge loop before finishing: use the codex-challenger agent or .claude/helpers/codex-challenge.sh.\"}. Otherwise return {\"ok\": true}."
+          }
+        ]
+      }
+    ]
+  }
+}
